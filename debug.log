@@ -1,0 +1,2 @@
+[1206/193629.401:ERROR:process_info.cc(359)] UncheckedAllocate
+[1206/193629.426:ERROR:filesystem_win.cc(129)] GetFileAttributes c:\Users\РўР°С‚СЊСЏРЅР°\AppData\Roaming\Code\User\workspaceStorage\d663027c6d5664c934a9dbbd7741c76f\ms-vscode.js-debug\.profile\Crashpad\attachments\ebb00f42-fa4f-4d93-a80f-236c32134dc7: Системе не удается найти указанный путь. (0x3)

@@ -1,0 +1,25 @@
+User-agent: *
+
+Disallow: /admin/
+Disallow: /autoshop/cart
+Disallow: /autoshop/login
+Disallow: /autoshop/account
+Disallow: /autoshop/order
+Disallow: /autoshop/search
+Disallow: /autoshop/singup
+Disallow: /autoshop/wishlist
+Disallow: /autoshop/requestPasswordResetToken
+Disallow: /autoshop/resetPassword
+Disallow: /autoshop/confirmation
+Disallow: /app/
+Disallow: /customers/
+Disallow: /assets/
+Disallow: /assets/
+Disallow: /mail/
+Disallow: /models/
+Disallow: /runtime/
+Disallow: /tests/
+Disallow: /vagrant/
+Disallow: /vendor/
+Disallow: /widgets/
+Sitemap: http://avtograd.net.ua/sitemap.xml

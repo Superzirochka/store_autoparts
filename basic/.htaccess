@@ -1,0 +1,8 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteRule ^(.+)?$ /web/$1
+</IfModule> 
+<Limit GET POST PUT DELETE>
+    Order allow,deny
+    Allow from all
+</Limit>

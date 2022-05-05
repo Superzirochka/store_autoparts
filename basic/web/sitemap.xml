@@ -1,0 +1,124 @@
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://http://avtograd.net.ua/</loc>
+<changefreq>daily </changefreq>
+<priority>1</priority>
+</url>
+<url>					2#
+<loc>https://ahttp://avtograd.net.ua/contact</loc>
+<changefreq>yearly</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					3#
+<loc>http://avtograd.net.ua/list</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+	товары
+<url>					4#
+<loc>http://avtograd.net.ua/view</loc>
+<changefreq>weekly</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					5#
+<loc>http://avtograd.net.ua/page</loc>
+<changefreq>yearly</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					6#
+<loc>http://avtograd.net.ua/actia</loc>#акции
+<changefreq>weekly</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					7#
+<loc>
+http://avtograd.net.ua/autoshop
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.7</priority>
+</url>
+			
+<url>					8#
+<loc>
+http://avtograd.net.ua/list?idCat=3
+</loc>
+
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					9#
+<loc>
+http://avtograd.net.ua/list?idCat=2
+</loc>
+<changefreq>daily </changefreq>
+<priority>0.6</priority>
+</url>
+<url>					10#
+<loc>
+http://avtograd.net.ua/list?idCat=4
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					11#
+<loc>
+http://avtograd.net.ua/list?idCat=5
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					12#
+<loc>
+http://avtograd.net.ua/list?idCat=6
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					13#
+<loc>
+http://avtograd.net.ua/list?idCat=7
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					14#
+<loc>
+http://avtograd.net.ua/list?idCat=8
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					15#
+<loc>
+http://avtograd.net.ua/list?idCat=9
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					16#
+<loc>
+http://avtograd.net.ua/list?idCat=10
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					17#
+<loc>
+http://avtograd.net.ua/list?idCat=11
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+<url>					18#
+<loc>
+http://avtograd.net.ua/list?idCat=13
+</loc>
+<changefreq>daily</changefreq>
+<priority>0.6</priority>
+</url>
+
+
+
+
+</urlset>

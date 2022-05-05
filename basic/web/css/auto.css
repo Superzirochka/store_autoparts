@@ -1,0 +1,62 @@
+.tree-head img {
+  width: auto;
+  height: 120px;
+  display: block;
+  -webkit-transition: all 1s ease-out;
+  -o-transition: all 1s ease-out;
+  transition: all 1s ease-out;
+}
+.lazy {
+  height: auto;
+  max-width: 100%;
+}
+
+.head-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree-head {
+  background: #fff;
+  height: 150px;
+  margin: 0;
+}
+.check-head {
+  background: #f1f1f1 !important;
+  color: #000;
+}
+
+.pointer-el {
+  cursor: pointer;
+  -webkit-transition: 0.1s ease-in-out;
+  -o-transition: 0.1s ease-in-out;
+  transition: 0.1s ease-in-out;
+}
+
+.tree-list {
+  background: #fff;
+  border: none;
+  padding: 15px;
+  -webkit-transition: all 2s linear;
+  -o-transition: all 2s linear;
+  transition: all 2s linear;
+  width: 100%;
+}
+
+.dblock {
+  display: block !important;
+}
+
+.tree-block {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+.tree-block .tree-item {
+  margin: 0 30px 30px 0;
+}
