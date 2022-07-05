@@ -5,7 +5,8 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 
 $lang = 1;
-$menu = Menu::find()->select('Id, NameMenu, Title, Link,  Sort, Content, Id_lang,Id_parentMenu')->where(['Id_lang' => $lang])->ORDERBY('Sort')->all();
+$menu = Menu::find()->select('Id, NameMenu, Title, NameMenu_ua, Title_ua, Link,  Sort, Content, Id_lang,Id_parentMenu')->ORDERBY('Sort')->all();
+
 ?>
 
 <div class="container-fluid" id="menu">
@@ -20,18 +21,19 @@ $menu = Menu::find()->select('Id, NameMenu, Title, Link,  Sort, Content, Id_lang
                 'aria-expanded' => 'false',
                 'aria-label' => 'Toggle navigation'
             ]) ?>
+            <? if ($lang == 1) : ?>
 
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <? foreach ($menu as $itemMenu) : ?>
+                            <?
+                            if (
+                                $itemMenu->Id_parentMenu == 0 //$itemMenu->Id_parentMenu
+                            ) : ?>
+                                <?
+                                $menuDrop = Menu::find()->select('Id, NameMenu_ua, Title_ua, Link,  Sort, Content, Id_lang,Id_parentMenu')->where(['Id_parentMenu' => $itemMenu->Id])->ORDERBY('Sort')->all();
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <? foreach ($menu as $itemMenu) : ?>
-                    <?
-                        if ($itemMenu->Id_parentMenu == 0 //$itemMenu->Id_parentMenu
-                        ) : ?>
-                    <? 
-                    $menuDrop = Menu::find()->select('Id, NameMenu, Title, Link,  Sort, Content, Id_lang,Id_parentMenu')->where(['Id_parentMenu' => $itemMenu->Id])->ORDERBY('Sort')->all();
-                     
-                                if (count($menuDrop)!= 0) {
+                                if (count($menuDrop) != 0) {
                                     $znach = 'role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="navbarDropdown' . $itemMenu->Id . '"';
                                     $drop = 'dropdown';
                                     $toggle = 'dropdown-toggle';
@@ -40,36 +42,91 @@ $menu = Menu::find()->select('Id, NameMenu, Title, Link,  Sort, Content, Id_lang
                                     $toggle = ' ';
                                     $drop = 'active';
                                 }
-                           
-                            ?>
-                    <li class="nav-item <?= $drop ?>">
-                        <a class="nav-link h4 <?= $toggle ?>" href="<?= Url::to([$itemMenu->Link], true) ?>" <?= $znach ?>><?= $itemMenu->NameMenu ?> <span class="sr-only">(current)</span></a>
-                        <? if (count($menuDrop)!= 0):?>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <? foreach ($menuDrop as $item) : ?>
-                            <? //if ($itemMenu->Id == $item->Id_parentMenu & $item->Id != $item->Id_parentMenu) : ?>
-                            <a class="dropdown-item h5" href="<?= yii\helpers\Url::to([$item->Link]) ?>"><?= $item->NameMenu ?></a>
-                            <div class="dropdown-divider"></div>
-                            <?// endif ?>
-                            <? endforeach ?>
-                        </div>
-                        <?endif?>
 
-                    </li>
+                                ?>
+                                <li class="nav-item <?= $drop ?>">
+                                    <a class="nav-link h4 <?= $toggle ?>" href="<?= Url::to([$itemMenu->Link], true) ?>" <?= $znach ?>><?= $itemMenu->NameMenu_ua ?> <span class="sr-only">(current)</span></a>
+                                    <? if (count($menuDrop) != 0) : ?>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            <? foreach ($menuDrop as $item) : ?>
+                                                <? //if ($itemMenu->Id == $item->Id_parentMenu & $item->Id != $item->Id_parentMenu) : 
+                                                ?>
+                                                <a class="dropdown-item h5" href="<?= yii\helpers\Url::to([$item->Link]) ?>"><?= $item->NameMenu_ua ?></a>
+                                                <div class="dropdown-divider"></div>
+                                                <? // endif 
+                                                ?>
+                                            <? endforeach ?>
+                                        </div>
+                                    <? endif ?>
 
-
-                    <? $menuDrop = [];?>
-                    <? endif ?>
-                    <? endforeach ?>
+                                </li>
 
 
-                </ul>
+                                <? $menuDrop = []; ?>
+                            <? endif ?>
+                        <? endforeach ?>
 
-                <form class="form-inline my-2 my-lg-0" id="searchForm" method="get" action="<?= Url::to(['autoshop/search']); ?>">
-                    <input class="form-control mr-sm-2" type="search" name="query" placeholder="Поиск" aria-label="Search" required>
-                    <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Поиск</button>
-                </form>
-            </div>
+
+                    </ul>
+
+                    <form class="form-inline my-2 my-lg-0" id="searchForm" method="get" action="<?= Url::to(['autoshop/search']); ?>">
+                        <input class="form-control mr-sm-2" type="search" name="query" placeholder="Поиск" aria-label="Search" required>
+                        <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Пошук</button>
+                    </form>
+                </div>
+            <? else : ?>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <? foreach ($menu as $itemMenu) : ?>
+                            <?
+                            if (
+                                $itemMenu->Id_parentMenu == 0 //$itemMenu->Id_parentMenu
+                            ) : ?>
+                                <?
+                                $menuDrop = Menu::find()->select('Id, NameMenu, Title, Link,  Sort, Content, Id_lang,Id_parentMenu')->where(['Id_parentMenu' => $itemMenu->Id])->ORDERBY('Sort')->all();
+
+                                if (count($menuDrop) != 0) {
+                                    $znach = 'role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="navbarDropdown' . $itemMenu->Id . '"';
+                                    $drop = 'dropdown';
+                                    $toggle = 'dropdown-toggle';
+                                } else {
+                                    $znach = ' ';
+                                    $toggle = ' ';
+                                    $drop = 'active';
+                                }
+
+                                ?>
+                                <li class="nav-item <?= $drop ?>">
+                                    <a class="nav-link h4 <?= $toggle ?>" href="<?= Url::to([$itemMenu->Link], true) ?>" <?= $znach ?>><?= $itemMenu->NameMenu ?> <span class="sr-only">(current)</span></a>
+                                    <? if (count($menuDrop) != 0) : ?>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            <? foreach ($menuDrop as $item) : ?>
+                                                <? //if ($itemMenu->Id == $item->Id_parentMenu & $item->Id != $item->Id_parentMenu) : 
+                                                ?>
+                                                <a class="dropdown-item h5" href="<?= yii\helpers\Url::to([$item->Link]) ?>"><?= $item->NameMenu ?></a>
+                                                <div class="dropdown-divider"></div>
+                                                <? // endif 
+                                                ?>
+                                            <? endforeach ?>
+                                        </div>
+                                    <? endif ?>
+
+                                </li>
+
+
+                                <? $menuDrop = []; ?>
+                            <? endif ?>
+                        <? endforeach ?>
+
+
+                    </ul>
+
+                    <form class="form-inline my-2 my-lg-0" id="searchForm" method="get" action="<?= Url::to(['autoshop/search']); ?>">
+                        <input class="form-control mr-sm-2" type="search" name="query" placeholder="Поиск" aria-label="Search" required>
+                        <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Поиск</button>
+                    </form>
+                </div>
         </nav>
     </menu>
+<? endif ?>
 </div>

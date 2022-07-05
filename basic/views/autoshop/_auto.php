@@ -17,8 +17,8 @@ $textModif = ['-'];
 ?>
 <div class="col-sm-12">
     <? Pjax::begin([
-    // Опции Pjax
-])?>
+        // Опции Pjax
+    ]) ?>
     <?php $form = ActiveForm::begin([
         'action' => 'index',
         'options' => [
@@ -27,26 +27,27 @@ $textModif = ['-'];
     ]) ?>
     <div class="form-row">
         <div class="col-md-3 ">
-            <?// var_dump($id) ?>
-            <?if (!empty($id)):?>
-            <? $m=ManufacturerAuto::find()->select(['Marka', 'Id'])->where(['Id' => $id])->one();
- $markaOne=[$m->Id=>$m->Marka];
-// $markaOne[]
-?>
-            <?= $form->field($model, 'marka')->dropDownList(
-                $markaOne,
-                //ManufacturerAuto::find()->select(['Marka', 'Id'])->where(['Id' => $id])->column(),
-                ['id' => 'marka', 'class' => 'form-control']
-            ); ?>
-            <?else:?>
-            <?= $form->field($model, 'marka')->dropDownList(
-                ManufacturerAuto::find()->select(['Marka', 'Id'])->indexBy('Id')->column(),
-                [
-                    'prompt' => 'Выберите марку автомобиля',  'id' => 'marka', 'class' => 'form-control', 'autofocus' => true
-                ]
-            ); ?>
+            <? // var_dump($id) 
+            ?>
+            <? if (!empty($id)) : ?>
+                <? $m = ManufacturerAuto::find()->select(['Marka', 'Id'])->where(['Id' => $id])->one();
+                $markaOne = [$m->Id => $m->Marka];
+                // $markaOne[]
+                ?>
+                <?= $form->field($model, 'marka')->dropDownList(
+                    $markaOne,
+                    //ManufacturerAuto::find()->select(['Marka', 'Id'])->where(['Id' => $id])->column(),
+                    ['id' => 'marka', 'class' => 'form-control']
+                ); ?>
+            <? else : ?>
+                <?= $form->field($model, 'marka')->dropDownList(
+                    ManufacturerAuto::find()->select(['Marka', 'Id'])->indexBy('Id')->column(),
+                    [
+                        'prompt' => 'Оберіть марку автомобіля',  'id' => 'marka', 'class' => 'form-control', 'autofocus' => true
+                    ]
+                ); ?>
 
-            <?endif?>
+            <? endif ?>
 
             <?php
             $js = <<<JS
@@ -78,27 +79,27 @@ JS;
 
         </div>
         <div class="col-md-3">
-            <?if (!empty($id)):?>
-            <?= $form->field($model, 'model')->dropDownList(
+            <? if (!empty($id)) : ?>
+                <?= $form->field($model, 'model')->dropDownList(
 
-                ModelAuto::find()->select(['ModelName', 'Id'])->where(['IdManufacturer' => $id])->indexBy('Id')->column(),
-                [
-                    'prompt' => 'Выберите...',
-                    'id' => 'model'
+                    ModelAuto::find()->select(['ModelName', 'Id'])->where(['IdManufacturer' => $id])->indexBy('Id')->column(),
+                    [
+                        'prompt' => 'Оберіть...',
+                        'id' => 'model'
 
-                ]
-            ) ?>
-            <?else:?>
-            <?= $form->field($model, 'model')->dropDownList(
-                $textModif,
-                // ModelAuto::find()->select(['ModelName', 'Id'])->indexBy('Id')->column(),
-                [
-                    'prompt' => 'Выберите...',
-                    'id' => 'model'
+                    ]
+                ) ?>
+            <? else : ?>
+                <?= $form->field($model, 'model')->dropDownList(
+                    $textModif,
+                    // ModelAuto::find()->select(['ModelName', 'Id'])->indexBy('Id')->column(),
+                    [
+                        'prompt' => 'Оберіть...',
+                        'id' => 'model'
 
-                ]
-            ) ?>
-            <?endif?>
+                    ]
+                ) ?>
+            <? endif ?>
             <?php
             $js = <<<JS
     $('#model').on('change', function(){
@@ -131,7 +132,7 @@ JS;
             <?= $form->field($model, 'modification')->dropDownList(
                 $textModif,
                 [
-                    'prompt' => 'Выберите...',
+                    'prompt' => 'Оберіть...',
                     'id' => 'modif'
 
                 ]
@@ -142,15 +143,15 @@ JS;
         </div>
         <div class="col-md-3 mt-4 ml-0">
             <?
-            if (!empty($id)):           
+            if (!empty($id)) :
             ?>
-            <?= Html::submitButton(Yii::t('app', 'ОК'), ['class' => 'btn w-50 mt-2 ml-5',  'id' => 'myBackgra']) ?>
+                <?= Html::submitButton(Yii::t('app', 'ОК'), ['class' => 'btn w-50 mt-2 ml-5',  'id' => 'myBackgra']) ?>
 
-            <!-- <a href="<?= yii\helpers\Url::to(['autocatalog/index', 'marka' => $model->marka, 'models' => $model->model, 'modification' => $model->modification]) ?>" class="btn w-25 mt-2" id="myBackgra">OK</a> -->
-            <?else:?>
-            <?= Html::submitButton(Yii::t('app', 'ОК'), ['class' => 'btn w-50 mt-2 ml-5',  'id' => 'myBackgra']) ?>
-            <!-- <a href="<?= yii\helpers\Url::to(['autocatalog/index', 'marka' => $model->marka, 'models' => $model->model, 'modification' => $model->modification]) ?>" class="btn w-25 mt-2" id="myBackgra">OK</a> -->
-            <?endif?>
+                <!-- <a href="<?= yii\helpers\Url::to(['autocatalog/index', 'marka' => $model->marka, 'models' => $model->model, 'modification' => $model->modification]) ?>" class="btn w-25 mt-2" id="myBackgra">OK</a> -->
+            <? else : ?>
+                <?= Html::submitButton(Yii::t('app', 'ОК'), ['class' => 'btn w-50 mt-2 ml-5',  'id' => 'myBackgra']) ?>
+                <!-- <a href="<?= yii\helpers\Url::to(['autocatalog/index', 'marka' => $model->marka, 'models' => $model->model, 'modification' => $model->modification]) ?>" class="btn w-25 mt-2" id="myBackgra">OK</a> -->
+            <? endif ?>
         </div>
 
     </div>
@@ -160,5 +161,5 @@ JS;
 
 
     <?php ActiveForm::end() ?>
-    <? Pjax::end();?>
+    <? Pjax::end(); ?>
 </div>

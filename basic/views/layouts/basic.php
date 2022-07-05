@@ -103,7 +103,8 @@ AppAsset::register($this); //регистрируем
 
           'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
-        <? //$this->params['breadcrumbs'][] = Yii::$app->controller->substr_content($this->title, '90'); ?>
+        <? //$this->params['breadcrumbs'][] = Yii::$app->controller->substr_content($this->title, '90'); 
+        ?>
 
       </nav>
     </div>
@@ -119,7 +120,7 @@ AppAsset::register($this); //регистрируем
     <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"> Ваша корзинa</h5>
+          <h5 class="modal-title" id="exampleModalLabel"> Ваш кошик</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -133,128 +134,128 @@ AppAsset::register($this); //регистрируем
           $cart = $session->get('cart');
         }
 
-        if (count($cart) == 0 || empty($cart['products']) && empty($cart['zakaz']) ): ?>
-        <div class="modal-body ">
-          <p>Ваша корзина пуста</p>
-        </div>
+        if (count($cart) == 0 || empty($cart['products']) && empty($cart['zakaz'])) : ?>
+          <div class="modal-body ">
+            <p>Ваш кошик порожній</p>
+          </div>
         <? else : ?>
-        <div class="modal-body ">
-          <table class="table table-hover">
-            <tbody>
-              <?if (!empty($cart['products'])): ?>
-              <tr>
-                <td scope="col" colspan="5">из наличия</td>
+          <div class="modal-body ">
+            <table class="table table-hover">
+              <tbody>
+                <? if (!empty($cart['products'])) : ?>
+                  <tr>
+                    <td scope="col" colspan="5">в наявності</td>
 
-              </tr>
+                  </tr>
 
-              <? foreach ($cart['products'] as $cItem) : ?>
+                  <? foreach ($cart['products'] as $cItem) : ?>
 
-              <?
-                  $prodItem = Products::findOne($cItem['Id']);
-                  // if ($prodItem->Id == $cItem['Id']) : 
-                 
-              if (!empty($prodItem->Img)) {
-                  $img = Yii::getAlias('@webroot') . '/img/' . $prodItem->Img;
-                  if (is_file($img)) {
-                      $url = Yii::getAlias('@web') . '/img/' .$prodItem->Img;             
-                  }
-              }else{
-                  $url= Yii::getAlias('@web') . '/img/products/defult_prodact.jpg';
-              }
-                ?>
-              <tr>
-                <td>
-                  <a href="<?= yii\helpers\Url::to(['autoshop/view', 'id' => $prodItem->Id]) ?>">
-                    <?= Html::img($url, ['alt' => 'Product', 'class' => 'picG ml-3']) ?>
-                  </a>
-                </td>
-                <td class="align-middle">
-                  <a href="<?= yii\helpers\Url::to(['autoshop/view', 'id' => $prodItem->Id]) ?>">
-                    <h4><?= $prodItem->Name ?></h4>
-                  </a>
-                </td>
-                <td class="align-middle">
-                  <strong class="p-2 bd-highlight"><?= $cItem['Quanty'] ?> * </strong>
-                  <strong class="p-2 bd-highlight"><?= $prodItem->Price ?></strong>
-                </td>
-                <td class="text-right align-middle">
-                  <a class="btn btn-danger" href="<?= yii\helpers\Url::to([
-                                                    'autoshop/list',
-                                                    // 'idCat' => $item->Id_category, 'nameCategory' =>  $catName, 
-                                                    'delCart' => 'del', 'id' => $prodItem->Id
-                                                  ]) ?>">
-                    <i class="fa fa-times"></i>
-                  </a>
-                  <!-- <a href="<?= yii\helpers\Url::to(['autoshop/cart', 'id' => $prodItem->Id, 'del' => 'delete']) ?>" class="btn btn-danger" data-toggle="tooltip" title="" data-original-title="Remove"> -->
+                    <?
+                    $prodItem = Products::findOne($cItem['Id']);
+                    // if ($prodItem->Id == $cItem['Id']) : 
 
-                  <!-- <i class="fa fa-times"></i>
+                    if (!empty($prodItem->Img)) {
+                      $img = Yii::getAlias('@webroot') . '/img/' . $prodItem->Img;
+                      if (is_file($img)) {
+                        $url = Yii::getAlias('@web') . '/img/' . $prodItem->Img;
+                      }
+                    } else {
+                      $url = Yii::getAlias('@web') . '/img/products/defult_prodact.jpg';
+                    }
+                    ?>
+                    <tr>
+                      <td>
+                        <a href="<?= yii\helpers\Url::to(['autoshop/view', 'id' => $prodItem->Id]) ?>">
+                          <?= Html::img($url, ['alt' => 'Product', 'class' => 'picG ml-3']) ?>
+                        </a>
+                      </td>
+                      <td class="align-middle">
+                        <a href="<?= yii\helpers\Url::to(['autoshop/view', 'id' => $prodItem->Id]) ?>">
+                          <h4><?= $prodItem->Name ?></h4>
+                        </a>
+                      </td>
+                      <td class="align-middle">
+                        <strong class="p-2 bd-highlight"><?= $cItem['Quanty'] ?> * </strong>
+                        <strong class="p-2 bd-highlight"><?= $prodItem->Price ?></strong>
+                      </td>
+                      <td class="text-right align-middle">
+                        <a class="btn btn-danger" href="<?= yii\helpers\Url::to([
+                                                          'autoshop/list',
+                                                          // 'idCat' => $item->Id_category, 'nameCategory' =>  $catName, 
+                                                          'delCart' => 'del', 'id' => $prodItem->Id
+                                                        ]) ?>">
+                          <i class="fa fa-times"></i>
+                        </a>
+                        <!-- <a href="<?= yii\helpers\Url::to(['autoshop/cart', 'id' => $prodItem->Id, 'del' => 'delete']) ?>" class="btn btn-danger" data-toggle="tooltip" title="" data-original-title="Remove"> -->
+
+                        <!-- <i class="fa fa-times"></i>
                   </a> -->
-                </td>
-              </tr>
+                      </td>
+                    </tr>
 
-              <? endforeach ?>
-              <?endif?>
-              <?if (!empty($cart['zakaz'])):?>
-              <tr>
-                <td scope="col" colspan="5">заказные</td>
+                  <? endforeach ?>
+                <? endif ?>
+                <? if (!empty($cart['zakaz'])) : ?>
+                  <tr>
+                    <td scope="col" colspan="5">під замовлення</td>
 
-              </tr>
+                  </tr>
 
-              <?foreach ($cart['zakaz'] as $itemZakaz):?>
-              <tr>
+                  <? foreach ($cart['zakaz'] as $itemZakaz) : ?>
+                    <tr>
 
-                <?
-              $prodZakaz = ZakazProducts::findOne($itemZakaz['Id']);
-              ?>
-                <td>
-                  <?
-                   $url1= Yii::getAlias($prodZakaz->Img);
-                   
-                  ?>
-                  <?= Html::img($url1, ['alt' => 'Product', 'class' => 'picG ml-3']) ?>
+                      <?
+                      $prodZakaz = ZakazProducts::findOne($itemZakaz['Id']);
+                      ?>
+                      <td>
+                        <?
+                        $url1 = Yii::getAlias($prodZakaz->Img);
+
+                        ?>
+                        <?= Html::img($url1, ['alt' => 'Product', 'class' => 'picG ml-3']) ?>
 
 
 
-                </td>
-                <td class="align-middle">
+                      </td>
+                      <td class="align-middle">
 
-                  <h4><?= $itemZakaz['ProductName'] ?></h4>
+                        <h4><?= $itemZakaz['ProductName'] ?></h4>
 
-                </td>
-                <td class="align-middle">
-                  <strong class="p-2 bd-highlight"><?= $itemZakaz['Quanty'] ?> * </strong>
-                  <strong class="p-2 bd-highlight"><?= $itemZakaz['Price'] ?></strong>
-                </td>
-                <td class="text-right align-middle">
-                  <a class="btn btn-danger" href="<?= yii\helpers\Url::to([
-                                                    'autoshop/search',
-                                                    // 'idCat' => $item->Id_category, 'nameCategory' =>  $catName, 
-                                                    'delZakaz' => 'del', 'id' => $itemZakaz['Id']
-                                                  ]) ?>">
-                    <i class="fa fa-times"></i>
-                  </a>
+                      </td>
+                      <td class="align-middle">
+                        <strong class="p-2 bd-highlight"><?= $itemZakaz['Quanty'] ?> * </strong>
+                        <strong class="p-2 bd-highlight"><?= $itemZakaz['Price'] ?></strong>
+                      </td>
+                      <td class="text-right align-middle">
+                        <a class="btn btn-danger" href="<?= yii\helpers\Url::to([
+                                                          'autoshop/search',
+                                                          // 'idCat' => $item->Id_category, 'nameCategory' =>  $catName, 
+                                                          'delZakaz' => 'del', 'id' => $itemZakaz['Id']
+                                                        ]) ?>">
+                          <i class="fa fa-times"></i>
+                        </a>
 
-                </td>
-              </tr>
-              <?endforeach?>
-              <?endif?>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td scope="col" colspan="2" class="pt-5" style="text-align:right"><strong>
-                    ИТОГО:</strong></td>
-                <td style="text-align:right" scope="col" class="pt-5"><strong> <span><?= $cart['amount'] ?><?= $sumCart ?> грн</span></strong></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+                      </td>
+                    </tr>
+                  <? endforeach ?>
+                <? endif ?>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td scope="col" colspan="2" class="pt-5" style="text-align:right"><strong>
+                      РАЗОМ:</strong></td>
+                  <td style="text-align:right" scope="col" class="pt-5"><strong> <span><?= $cart['amount'] ?><?= $sumCart ?> грн</span></strong></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         <? endif ?>
         <div class="modal-footer">
-          <a href="<?= yii\helpers\Url::to(['autoshop/cart']) ?>" class="btn btn-secondary">Перейти в корзину</a>
+          <a href="<?= yii\helpers\Url::to(['autoshop/cart']) ?>" class="btn btn-secondary">Перейти до кошика</a>
           <a href="<?= Url::to(['autoshop/cart', 'clear' => 'yes']); ?>" class="btn btn-danger" onclick="<?= Url::remember(); ?>">
-            Очистить корзину
+            Очистити кошик
           </a>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
         </div>
       </div>
     </div>
@@ -264,6 +265,7 @@ AppAsset::register($this); //регистрируем
   <?= $this->render('_footer') ?>
   <!-- stop footer--->
   <?php $this->endBody() ?>
+  <script src='https://callback.cityhost.ua/js/' data-lang='uk'></script>
 
 </body>
 

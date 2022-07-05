@@ -9,7 +9,7 @@ $config = [
     'bootstrap' => ['log'],
     'defaultRoute' => 'autoshop/index',
     'layout' => 'basic',
-    'language' => 'ru',
+    'language' => 'ua',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -128,7 +128,7 @@ $config = [
                 'path' => 'img/pages', // директория внутри web
                 'name' => 'Изображения'
             ],
-   ]
+        ]
     ],
     'params' => $params,
 ];

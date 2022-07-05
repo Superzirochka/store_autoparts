@@ -77,13 +77,13 @@ if (!Yii::$app->session->has('cart')) {
     Yii::$app->session->set('cart', []);
 
     if (count($ss) == 0) {
-        $textCart = 'пуста';
+        $textCart = 'порожній';
     }
 } else {
     $ss = Yii::$app->session->get('cart');
 
     if (empty($ss['products']) && empty($ss['zakaz'])) {
-        $textCart = 'пуста';
+        $textCart = 'порожній';
     } else {
         //   var_dump(count($ss['products']));
         if (!empty($ss['products'])) {
@@ -96,7 +96,18 @@ if (!Yii::$app->session->has('cart')) {
     }
 }
 
+// function LangChange($lani)
+// {
+//     $l = [];
+//     $session = Yii::$app->session;
+//     $session->open();
+//     $l = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
+//     // ['Id' => $lani->Id, 'language' => $lani->language, 'Abb' => $lani->Abb];
+//     //var_dump($l);
+//     return $session->set('lang', $l);
 
+//     //Yii::$app->getResponse()->redirect(Yii::$app->getRequest()->getUrl());
+// }
 
 ?>
 
@@ -129,29 +140,12 @@ if (!Yii::$app->session->has('cart')) {
     <div class="row">
         <div class="top-menu col-sm-1">
             <!-- Start Language -->
-            <ul class="language" id="lag">
-                <? foreach ($lang as $lan) : ?>
-                <? if ($lan->Abb == $langCurr['Abb']) : ?>
-                <li> <a data-toggle="dropdown" class="dropdown-toggle active lag" href="#">
-                        <?= Html::img('@web/img/' . $lan->Img, ['class' => 'flag-' . $lan->Abb]) ?>&nbsp;
-                    </a>
-                    <? endif
-                            ?>
-                    <? endforeach ?>
+            <div class="language" id="lag">
 
-                    <ul>
-                        <? foreach ($lang as $lani) : ?>
-                        <li> <a href="#" class="lag">
-                                <!-- onclick="<?//= LangChange($lani) ?>" -->
-                                <?= Html::img('@web/img/' . $lani->Img, ['class' => 'flag-' . $lani->Abb]) ?>&nbsp;
-
-                            </a></li>
-                        <? endforeach ?>
-                    </ul>
-
-
-                </li>
-            </ul>
+                <a class="lag" href="#">
+                    <?= Html::img('@web/img/' . $lang[0]->Img, ['class' => 'flag-' . $lang[0]->Abb]) ?>&nbsp;
+                </a>
+            </div>
             <!-- End Language -->
             <!-- Start Currency -->
             <!--<ul class="currency"> -->
@@ -164,7 +158,7 @@ if (!Yii::$app->session->has('cart')) {
 
                     </a>
                     <? endif
-                            ?>
+                    ?>
                     <? endforeach ?>
                     <ul>
                         <? foreach ($currents as $cur) : ?>
@@ -179,13 +173,22 @@ if (!Yii::$app->session->has('cart')) {
                 </li>
             </ul> -->
             <!-- <select id="currency" name="currency" class="currency">
-                            <? //foreach ($currents as $cur) : ?>
-                                <?// if ($cur->Name == 'UAH') : ?>
-                                    <option value="<?//= $cur->Name ?>  " selected="selected"><?//= $cur->Small_name . ' ' . $cur->Name ?></option>
-                                <?// else : ?>
-                                    <option value="<?//= $cur->Name ?>"><?//= $cur->Small_name . ' ' . $cur->Name ?></option>
-                                <?// endif ?>
-                            <?// endforeach ?>
+                            <? //foreach ($currents as $cur) : 
+                            ?>
+                                <? // if ($cur->Name == 'UAH') : 
+                                ?>
+                                    <option value="<? //= $cur->Name 
+                                                    ?>  " selected="selected"><? //= $cur->Small_name . ' ' . $cur->Name 
+                                                                                ?></option>
+                                <? // else : 
+                                ?>
+                                    <option value="<? //= $cur->Name 
+                                                    ?>"><? //= $cur->Small_name . ' ' . $cur->Name 
+                                                        ?></option>
+                                <? // endif 
+                                ?>
+                            <? // endforeach 
+                            ?>
                         </select> -->
             <!-- End Currency -->
 
@@ -198,38 +201,39 @@ if (!Yii::$app->session->has('cart')) {
                     </p>
                 </div>
                 <div class="col-sm-9">
-                    <p id="adr" class="text-light  mt-2"><?= $store['Adress'] ?> ☎ <?= $store['Phone'] ?> </p>
+                    <p id="adr" class="text-light  mt-2"><?= $store['Adress_ua'] ?> ☎ <?= $store['Phone'] ?> </p>
                 </div>
             </div>
 
         </div>
         <div class="col-sm-2 mt-2">
             <!-- <nav class="nav"> -->
-            <a href="<?= yii\helpers\Url::to(['autoshop/contact']) ?>" class="ml-1 text-light" title="Контакты">☎</a>
+            <a href="<?= yii\helpers\Url::to(['autoshop/contact']) ?>" class="ml-1 text-light" title="Контакти">☎</a>
 
             <?
-                    if ($customer['Id']==1){
-                    $accountMSG ='Вход в кабинет';
-                    $accountUrl = yii\helpers\Url::to(['autoshop/login']);
-                  //  $logout='';
-                }else{
-                    $accountMSG ='Мой кабинет';
-                    $accountUrl = yii\helpers\Url::to(['autoshop/account']); 
-                  //$logout =yii\helpers\Url::to(['autoshop/exit']); 
-                   // $logoutText ='Выход';
-                }
-                    
-                ?>
+            if ($customer['Id'] == 1) {
+                $accountMSG = 'Вхід до кабінету';
+                $accountUrl = yii\helpers\Url::to(['autoshop/login']);
+                //  $logout='';
+            } else {
+                $accountMSG = 'Мій кабінет';
+                $accountUrl = yii\helpers\Url::to(['autoshop/account']);
+                //$logout =yii\helpers\Url::to(['autoshop/exit']); 
+                // $logoutText ='Выход';
+            }
+
+            ?>
             <a href="<?= $accountUrl ?>" title="<?= $accountMSG ?>" class="ml-1 mr-1 text-light"><i class="fa fa-sign-in "></i></a>
 
-            <a href="<?= yii\helpers\Url::to(['autoshop/wishlist']) ?>" class=" text-danger" title="Список желаний"><i class="fa fa-lg fa-heart text-danger">(<?= $countwishlist ?>) </i> </a>
-            <!-- <a href="<?// = $logout ?>" class="nav-link" title="Выход"><i class="fas fa-lg fa-share"></i> </a> -->
+            <a href="<?= yii\helpers\Url::to(['autoshop/wishlist']) ?>" class=" text-danger" title="Список бажань"><i class="fa fa-lg fa-heart text-danger">(<?= $countwishlist ?>) </i> </a>
+            <!-- <a href="<? // = $logout 
+                            ?>" class="nav-link" title="Выход"><i class="fas fa-lg fa-share"></i> </a> -->
             <!-- </nav> -->
         </div>
     </div>
 </div>
 <div class="row runRow">
-    <marquee scrollamount="4" style="color: #ffffff; font-size: 24px; font-weight: bolder; line-height: 150%; text-shadow: #000ff0 0px 1px 1px;" class=" mt-0"> <?= ' ' . $store['Meta_description'] . ' *  * ' . $store['Meta_description'] ?></marquee>
+    <marquee scrollamount="4" style="color: #ffffff; font-size: 24px; font-weight: bolder; line-height: 150%; text-shadow: #000ff0 0px 1px 1px;" class=" mt-0"> <?= ' ' . $store['Meta_description_ua'] . ' *  * ' . $store['Meta_description_ua'] ?></marquee>
 </div>
 <header class="container-fluid my-header flex-column">
 
@@ -255,7 +259,7 @@ if (!Yii::$app->session->has('cart')) {
             <div class="col-sm-8" id="media-button">
                 <div class="button ml-2 " id="cartHeader">
 
-                    <input type="submit" value="Корзина (<?= $textCart ?>)" data-toggle="modal" data-target="#exampleModal" />
+                    <input type="submit" value="Кошик (<?= $textCart ?>)" data-toggle="modal" data-target="#exampleModal" />
 
                 </div>
 
@@ -267,10 +271,11 @@ if (!Yii::$app->session->has('cart')) {
         <!--  </div> -->
         <div class="row">
             <div class="col-sm-7 offset-sm-5" id="mobileSearch">
-                <?//= Html::img('@web/img/' . $store->Logo, ['class' => 'small']) ?>
+                <? //= Html::img('@web/img/' . $store->Logo, ['class' => 'small']) 
+                ?>
                 <form class="form-inline my-2 my-lg-0 " id="searchForm" method="get" action="<?= Url::to(['autoshop/search']); ?>">
                     <div class="button">
-                        <input class="form-control mr-sm-2" type="search" name="query" placeholder="Поиск" aria-label="Search">
+                        <input class="form-control mr-sm-2" type="search" name="query" placeholder="Пошук" aria-label="Search">
                         <button class="btn btn-outline-success ml-1 my-sm-0" type="submit">&#8680;</button>
 
                     </div>

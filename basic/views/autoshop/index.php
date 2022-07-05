@@ -11,8 +11,7 @@ use yii\helpers\Html;
 
 <div class="container my-shadow " id="content_box">
     <div class="row">
-        <? //= app\components\AutoWidget::widget(); 
-        ?>
+
         <?= $this->render('_auto', [
             'model' => $model,
         ]) ?>
@@ -21,8 +20,6 @@ use yii\helpers\Html;
     <div class="row ">
         <!--карусель-->
         <?= app\components\BannerWidget::widget() ?>
-        <!-- <img src="http://www.fps-catalog.com.ua/img.php?m=bd&amp;id=0011011" id="imgbd0011011"> -->
-
     </div>
 
 

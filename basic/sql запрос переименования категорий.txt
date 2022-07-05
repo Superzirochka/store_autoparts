@@ -1,0 +1,5 @@
+UPDATE `category` SET `Name_ua`='Двигун',`Description_ua`='Двигун',`MetaDescription_ua`='Двигун',`MetaTitle_ua`='Двигун',`MetaKeyword_ua`='Двигун' WHERE `Id`=2;
+UPDATE `category` SET `Name_ua`='Ремінний привід',`Description_ua`='Ремінний привід',`MetaDescription_ua`='Ремінний привід',`MetaTitle_ua`='Двигун',`MetaKeyword_ua`='Ремінний привід' WHERE `Id`=16;
+UPDATE `category` SET `Name_ua`='Полікліновий ремінь/комплект',`Description_ua`='Полікліновий ремінь/комплект',`MetaDescription_ua`='Полікліновий ремінь/комплект',`MetaTitle_ua`='Полікліновий ремінь/комплект',`MetaKeyword_ua`='Полікліновий ремінь/комплект' WHERE `Id`=17;
+UPDATE `category` SET `Name_ua`='Ремінь ГРМ / комплект',`Description_ua`='Ремінь ГРМ / комплект',`MetaDescription_ua`='Ремінь ГРМ / комплект',`MetaTitle_ua`='Ремінь ГРМ / комплект',`MetaKeyword_ua`='Ремінь ГРМ / комплект' WHERE `Id`=18;
+UPDATE `category` SET `Name_ua`='Прокладки двигуна',`Description_ua`='Прокладки двигуна',`MetaDescription_ua`='Прокладки двигуна',`MetaTitle_ua`='Прокладки двигуна',`MetaKeyword_ua`='Прокладки двигуна' WHERE `Id`=19;

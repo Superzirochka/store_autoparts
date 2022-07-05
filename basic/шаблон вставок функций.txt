@@ -1,0 +1,90 @@
+ 
+Yii::$app->session
+
+$greeting = $this->getSessionGreeting();
+$customer = $this->getSessionCustomer();
+$wishlist = $this->getWishSession();
+$lang = $this->getSessionLang();
+$current = $this->getSessionCurrent();
+
+
+$this->getCartSession();
+
+public function openSession()
+    {
+        $session = Yii::$app->session;
+        $session->open();
+        return $session;
+    }
+
+    public function getCartSession()
+    {
+        $session = $this->openSession();
+        if (!$session->has('cart')) {
+            $session->set('cart', []);
+            return  [];
+        } else {
+            return   $session->get('cart');
+        }
+    }
+
+    public function getWishSession()
+    {
+        // $session = Yii::$app->session;
+        // $session->open();
+        $session = $this->openSession();
+        if (!$session->has('wish_auto')) {
+            $session->set('wish_auto', []);
+            return  [];
+        } else {
+            return   $session->get('wish_auto');
+        }
+    }
+
+    public function getSessionLang()
+    {
+        $session = $this->openSession();
+        if (!$session->has('lang')) {
+            $lang = ['Id' => 1, 'language' => 'Українська', 'Abb' => 'ua'];
+            $session->set('lang', $lang);
+        } else {
+            $lang = $session->get('lang');
+        }
+        return $lang;
+    }
+
+    public function getSessionCurrent()
+    {
+        $session = $this->openSession();
+        if (!$session->has('current')) {
+            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
+            $session->set('current', $current);
+        } else {
+            $current = $session->get('current');
+        }
+        return $current;
+    }
+
+    public function getSessionCustomer()
+    {
+        $session = $this->openSession();
+        if (!$session->has('customer')) {
+            $customer = ['Id' => 1, 'FName' => 'Гість'];
+            $session->set('customer', $customer);
+        } else {
+            $customer = $session->get('customer');
+        }
+        return  $customer;
+    }
+
+    public function getSessionGreeting()
+    {
+        $session = $this->openSession();
+        if (!$session->has('greeting')) {
+            $greeting = 'Добрий день';
+            $session->set('greeting', $greeting);
+        } else {
+            $greeting = $session->get('greeting');
+        }
+        return  $greeting;
+    }

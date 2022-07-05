@@ -33,59 +33,54 @@ if ($session->has('store')) {
     <div class="container">
         <div class="row myrow">
             <div class="col-sm-3">
-                <h5>Информация</h5>
+                <h5>Інформація</h5>
 
                 <ul class="list-unstyled">
-                    <? foreach($this->context->pageMenu as $page): ?>
+                    <? foreach ($this->context->pageMenu as $page) : ?>
 
-                    <?if ($page['parent_id'] == 1):?>
-                    <li><a href="<?= yii\helpers\Url::to(['autoshop/page', 'slug' => $page['Slug']]) ?>"><?= $page['Name'] ?></a></li>
-                    <?endif?>
-                    <?endforeach?>
-                    <!-- 
-                    <li><a href="<?//= yii\helpers\Url::to(['autoshop/about']) ?>">О нас</a></li>
-                    <li><a href="<?//= yii\helpers\Url::to(['autoshop/dostavka']) ?>">Доставка</a></li>
-                    <li> <a href="<?//= yii\helpers\Url::to(['autoshop/oplata']) ?>">Оплата</a></li> -->
+                        <? if ($page['parent_id'] == 1) : ?>
+                            <li><a href="<?= yii\helpers\Url::to(['autoshop/page', 'slug' => $page['Slug']]) ?>"><?= $page['Name_ua'] ?></a></li>
+                        <? endif ?>
+                    <? endforeach ?>
 
-                </ul>
-                <!--              <a href="#"></a>-->
-            </div>
-            <div class="col-sm-3">
-                <h5>Служба поддержки </h5>
-                <ul class="list-unstyled">
-                    <li> <a href="<?= yii\helpers\Url::to(['autoshop/contact']) ?>">Контакты</a></li>
-                    <? foreach($this->context->pageMenu as $page): ?>
-
-                    <?if ($page['parent_id'] == 5):?>
-                    <li><a href="<?= yii\helpers\Url::to(['autoshop/page', 'slug' => $page['Slug']]) ?>"><?= $page['Name'] ?></a></li>
-                    <?endif?>
-                    <?endforeach?>
-                    <!-- <li><a href="<?= yii\helpers\Url::to(['autoshop/vozvrat']) ?>">Возврат товара</a></li>
-                    <li><a href="<?= yii\helpers\Url::to(['autoshop/confiden']) ?>">Политика Безопасности</a></li> -->
                 </ul>
 
             </div>
             <div class="col-sm-3">
-                <h5>Дополнительно</h5>
+                <h5>Служба підтримки </h5>
                 <ul class="list-unstyled">
-                    <!-- <li><a href="<?= yii\helpers\Url::to(['autoshop/list']) ?>">Производители</a></li> -->
-                    <li><a href="<?= yii\helpers\Url::to(['autoshop/actia']) ?>">Акции</a></li>
+                    <li> <a href="<?= yii\helpers\Url::to(['autoshop/contact']) ?>">Контакти</a></li>
+                    <? foreach ($this->context->pageMenu as $page) : ?>
 
-                    <? foreach($this->context->pageMenu as $page): ?>
+                        <? if ($page['parent_id'] == 5) : ?>
+                            <li><a href="<?= yii\helpers\Url::to(['autoshop/page', 'slug' => $page['Slug']]) ?>"><?= $page['Name_ua'] ?></a></li>
+                        <? endif ?>
+                    <? endforeach ?>
 
-                    <?if ($page['parent_id'] == 9):?>
-                    <li><a href="<?= yii\helpers\Url::to(['autoshop/page', 'slug' => $page['Slug']]) ?>"><?= $page['Name'] ?></a></li>
-                    <?endif?>
-                    <?endforeach?>
+                </ul>
+
+            </div>
+            <div class="col-sm-3">
+                <h5>Додатково</h5>
+                <ul class="list-unstyled">
+
+                    <li><a href="<?= yii\helpers\Url::to(['autoshop/actia']) ?>">Акції</a></li>
+
+                    <? foreach ($this->context->pageMenu as $page) : ?>
+
+                        <? if ($page['parent_id'] == 9) : ?>
+                            <li><a href="<?= yii\helpers\Url::to(['autoshop/page', 'slug' => $page['Slug']]) ?>"><?= $page['Name_ua'] ?></a></li>
+                        <? endif ?>
+                    <? endforeach ?>
                 </ul>
 
             </div>
             <div class="col-sm-3">
                 <?
-              //  var_dump($store);
+                //  var_dump($store);
                 ?>
-                <h5>Мы всегда на связи</h5>
-                <h6>Контактные телефоны</h6>
+                <h5>Ми завжди на зв'язку</h5>
+                <h6>Контактні телефони</h6>
                 <h6>+38(066)7906540</h6>
                 <h6>+38(063)7612590</h6>
                 <div class="sp">

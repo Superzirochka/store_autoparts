@@ -35,9 +35,9 @@ class AutoForm extends Model
     public function attributeLabels()
     {
         return [
-            'marka' => Yii::t('app', 'Выберите марку '),
-            'model' =>  Yii::t('app', 'Выберите модель'),
-            'modification' =>  Yii::t('app', 'Выберите модификацию'),
+            'marka' => Yii::t('app', 'Оберіть марку авто '),
+            'model' =>  Yii::t('app', 'Оберіть модель'),
+            'modification' =>  Yii::t('app', 'Оберіть модіфікацію'),
 
 
         ];

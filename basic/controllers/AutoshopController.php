@@ -105,13 +105,101 @@ class AutoshopController extends AppController // \yii\web\Controller
         ];
     }
 
-    public function actionAccount()
+    public function openSession()
     {
         $session = Yii::$app->session;
         $session->open();
+        return $session;
+    }
+
+    public function setCartDefult()
+    {
+        $session = $this->openSession();
+        if (!$session->has('cart')) {
+            $session->set('cart', []);
+        }
+    }
+
+    public function getCartSession()
+    {
+        $session = $this->openSession();
+        if (!$session->has('cart')) {
+            $session->set('cart', []);
+            return  [];
+        } else {
+            return   $session->get('cart');
+        }
+    }
+
+    public function getWishSession()
+    {
+
+        $session = $this->openSession();
+        if (!$session->has('wish_auto')) {
+            $session->set('wish_auto', []);
+            return  [];
+        } else {
+            return   $session->get('wish_auto');
+        }
+    }
+
+    public function getSessionLang()
+    {
+        $session = $this->openSession();
+        if (!$session->has('lang')) {
+            $lang = ['Id' => 0, 'language' => 'Українська', 'Abb' => 'ua'];
+            $session->set('lang', $lang);
+        } else {
+            $lang = $session->get('lang');
+        }
+        return $lang;
+    }
+
+    public function getSessionCurrent()
+    {
+        $session = $this->openSession();
+        if (!$session->has('current')) {
+            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
+            $session->set('current', $current);
+        } else {
+            $current = $session->get('current');
+        }
+        return $current;
+    }
+
+    public function getSessionCustomer()
+    {
+        $session = $this->openSession();
+        if (!$session->has('customer')) {
+            $customer = ['Id' => 1, 'FName' => 'Гість'];
+            $session->set('customer', $customer);
+        } else {
+            $customer = $session->get('customer');
+        }
+        return  $customer;
+    }
+
+    public function getSessionGreeting()
+    {
+        $session = $this->openSession();
+        if (!$session->has('greeting')) {
+            $greeting = 'Добрий день';
+            $session->set('greeting', $greeting);
+        } else {
+            $greeting = $session->get('greeting');
+        }
+        return  $greeting;
+    }
+
+
+    // -----------------------------
+    //-------------------------
+
+    public function actionAccount()
+    {
         $cur = 1;
-        $customer = $session->get('customer');
-        $wishlist = $session->get('wish_auto');
+        $customer = $this->getSessionCustomer();
+        $wishlist = $this->getWishSession();
         $id_cust = $customer['Id'];
         if ($customer['Id'] == 1) {
             return $this->redirect('login');
@@ -127,7 +215,7 @@ class AutoshopController extends AppController // \yii\web\Controller
             }
 
             // $us = ['Id' => $log->Id, 'FName' => $log->FName];
-            $session->set('customer', ['Id' => $customer['Id'], 'FName' => $model->nameuser]);
+            Yii::$app->session->set('customer', ['Id' => $customer['Id'], 'FName' => $model->nameuser]);
 
             \Yii::$app
                 ->db
@@ -164,9 +252,8 @@ class AutoshopController extends AppController // \yii\web\Controller
         }
 
         if ($_GET['clear'] == 'clear') {
-            $session = Yii::$app->session;
-            $session->open();
-            $session->set('wish_auto', []);
+
+            Yii::$app->session->set('wish_auto', []);
             \Yii::$app
                 ->db
                 ->createCommand()
@@ -189,7 +276,7 @@ class AutoshopController extends AppController // \yii\web\Controller
         }
         $current = Current::findOne($id = $cur);
         $query = Products::find()->select('Id, Name, Description, Img, Img2, MetaDescription, MetaTitle, MetaKeyword, IdBrand, Id_lang, Id_category, Price, Id_discont, Availability, Id_current, MinQunt')->orderBy('Name DESC')->all();
-        $wishlistSesion = $session->get('wish_auto');
+        $wishlistSesion = $this->getWishSession();
         $countSES = 0;
         if (!empty($wishlistSesion)) {
             foreach ($wishlistSesion['products'] as $ses) {
@@ -243,7 +330,7 @@ class AutoshopController extends AppController // \yii\web\Controller
         }
 
         if (!$wishlist['products']) {
-            $messageWish = 'Ваш список желаний пуст';
+            $messageWish = 'Ваш список бажань порожній';
         } else {
             $messageWish = '';
         }
@@ -274,9 +361,7 @@ class AutoshopController extends AppController // \yii\web\Controller
 
     public function actionLogin()
     {
-        $session = Yii::$app->session;
-        $session->open();
-        $customer = $session->get('customer');
+        $customer = $this->getSessionCustomer();
         $model = new LoginForm();
         if ($customer['Id'] !== 1) {
 
@@ -289,12 +374,12 @@ class AutoshopController extends AppController // \yii\web\Controller
             // $pass = \Yii::$app->security->generatePasswordHash($model->password);
             // if($log->Password == $model->password){
             if (Yii::$app->getSecurity()->validatePassword($model->password, $log->Password)) {
-                $session->set('customer', []);
+                Yii::$app->session->set('customer', []);
                 $us = ['Id' => $log->Id, 'FName' => $log->FName];
 
-                $customer = $session->set('customer', $us);
+                $customer = Yii::$app->session->set('customer', $us);
                 $cartUser = Carts::find()->select('IdProduct, IdCustomer, Name,  Price,  DateAdd, Quanty')->where(['IdCustomer' => $log->Id])->all();
-                $cartSes = $session->get('cart');
+                $cartSes = $this->getCartSession();
 
                 if (count($cartUser) !== 0) {
                     if (!isset($cartSes['products'])) {
@@ -310,7 +395,7 @@ class AutoshopController extends AppController // \yii\web\Controller
                             $amount = $amount + $item['Price'] * $item['Quanty'];
                         }
                         $cart['amount'] = $amount;
-                        $session->set('cart', $cart);
+                        Yii::$app->session->set('cart', $cart);
                     } else {
                         $cart = [];
                         foreach ($cartUser as $product) {
@@ -339,7 +424,7 @@ class AutoshopController extends AppController // \yii\web\Controller
                             $amount = $amount + $item['Price'] * $item['Quanty'];
                         }
                         $cart['amount'] = $amount;
-                        $session->set('cart', $cart);
+                        Yii::$app->session->set('cart', $cart);
                     }
                 }
 
@@ -359,9 +444,7 @@ class AutoshopController extends AppController // \yii\web\Controller
 
     public function actionSingup()
     {
-        $session = Yii::$app->session;
-        $session->open();
-        $customer = $session->get('customer');
+        $customer = $this->getSessionCustomer();
         if ($customer['Id'] !== 1) {
 
             return $this->redirect('account');
@@ -398,10 +481,10 @@ class AutoshopController extends AppController // \yii\web\Controller
                 ->insert('customers', ['Login' => $user->Login, 'password_reset_token' => $user->hash, 'hash' => $user->hash, 'FName' => $user->FName,   'LName' => $user->LName, 'Email' => $user->Email,  'Phone' => $user->Phone, 'News' => $user->News, 'City' => $user->City, 'Adres' => $user->Adres, 'IdGruop' => $user->IdGruop, 'Password' => $user->Password, 'Status' => 10, 'DateRegistration' => $today])
                 ->execute();
             // if ($user->save()) {
-            $session->set('customer', []);
+            Yii::$app->session->set('customer', []);
             $c = User::findByUsername($user->Login);
             $customer = ['Id' => $c['Id'], 'FName' => $user->FName];
-            $session->set('customer', $customer);
+            Yii::$app->session->set('customer', $customer);
             return $this->goHome();
             // }
         }
@@ -422,13 +505,11 @@ class AutoshopController extends AppController // \yii\web\Controller
      */
     public function actionExit()
     {
-        $session = Yii::$app->session;
-        $session->open();
-        $customer = $session->get('customer');
+        $customer = $this->getSessionCustomer();
         if ($customer['Id'] == 1) {
             return $this->redirect('index');
         }
-        $wishlist = $session->get('wish_auto');
+        $wishlist = $this->getWishSession();
         $wishlistBD = Wishlist::find()->select('IdCustomer, IdProduct, DateAdd, Name, Price, MinQunt')->where(['IdCustomer' => $customer['Id']])->all();
         $countSES = 0;
         if (isset($wishlist['products'])) {
@@ -483,7 +564,7 @@ class AutoshopController extends AppController // \yii\web\Controller
             }
         }
 
-        $cartSes = $session->get('cart');
+        $cartSes = $this->getCartSession();;
         $countCart = 0;
         if (isset($cartSes['products'])) {
             foreach ($cartSes['products'] as $ses) {
@@ -538,9 +619,9 @@ class AutoshopController extends AppController // \yii\web\Controller
             }
         }
 
-        $session->remove('customer');
-        $customer = ['Id' => 1, 'FName' => 'Гость'];
-        $session->set('customer', $customer);
+        Yii::$app->session->remove('customer');
+        $customer = ['Id' => 1, 'FName' => 'Гість'];
+        Yii::$app->session->set('customer', $customer);
         Yii::$app->session->set('wish_auto', []);
         return $this->goHome();
     }
@@ -556,10 +637,10 @@ class AutoshopController extends AppController // \yii\web\Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                Yii::$app->session->setFlash('success', 'Проверьте свою электронную почту для получения дальнейших инструкций.');
+                Yii::$app->session->setFlash('success', 'Перевірте свою електронну пошту для подальших інструкцій.');
                 return $this->goHome();
             } else {
-                Yii::$app->session->setFlash('error', 'К сожалению, мы не можем сбросить пароль для указанного адреса электронной почты.');
+                Yii::$app->session->setFlash('error', 'На жаль, ми не можемо скинути пароль для вказаної адреси електронної пошти.');
             }
         }
 
@@ -584,7 +665,7 @@ class AutoshopController extends AppController // \yii\web\Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('success', 'Новый пароль сохранен.');
+            Yii::$app->session->setFlash('success', 'Новий пароль збережено.');
             return $this->goHome();
         }
 
@@ -598,24 +679,14 @@ class AutoshopController extends AppController // \yii\web\Controller
 
     public function actionConfirmation()
     {
-        $session = Yii::$app->session;
-        $session->open();
 
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
+
+        $greeting = $this->getSessionGreeting();
+        $lang = $this->getSessionLang();
+
         $this->setMetaTags();
 
-        $person = $session->get('person');
+        $person = Yii::$app->session->get('person');
         $name = $person['name'];
         $lastname = $person['lastname'];
         $email = $person['email'];
@@ -623,29 +694,14 @@ class AutoshopController extends AppController // \yii\web\Controller
             return $this->goHome();
         }
 
-        $session->set('cart', []);
-        $session->set('person', []);
+        Yii::$app->session->set('cart', []);
+        Yii::$app->session->set('person', []);
 
         return $this->render('confirmation', compact('email', 'name', 'lastname'));
     }
 
     public function actionActia()
     {
-        $session = Yii::$app->session;
-        $session->open();
-
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
         $this->setMetaTags();
         $actions = Actions::find()->orderBy('DateAdd DESC')->all();
 
@@ -658,30 +714,11 @@ class AutoshopController extends AppController // \yii\web\Controller
         $session = Yii::$app->session;
         $session->open();
         $person = $session->get('person');
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
+        $greeting = $this->getSessionGreeting();
+        $customer = $this->getSessionCustomer();
+        $wishlist = $this->getWishSession();
+        $lang = $this->getSessionLang();
+        $current = $this->getSessionCurrent();
 
         $this->setMetaTags();
         $cur =  $current['Id'];
@@ -690,7 +727,7 @@ class AutoshopController extends AppController // \yii\web\Controller
         if ($carts['amount'] == 0) {
             Yii::$app->session->setFlash(
                 'warning',
-                'Ваша корзина пуста!'
+                'Ваш кошик порожній!'
             );
             return  $this->redirect(['index']);
         }
@@ -703,13 +740,11 @@ class AutoshopController extends AppController // \yii\web\Controller
                 $option = '';
 
                 if ($id == 1) {
-                    $option = 'Харьков';
+                    $option = 'Харків';
                     '<label class="control-label" for="shipingCity">Город доставки</label>
-                    // <input type="text" id="shipingCity" class="form-control" name="OrdersForm[shipingCity]" value="Харьков" readonly>';
+                    // <input type="text" id="shipingCity" class="form-control" name="OrdersForm[shipingCity]" value="Харків" readonly>';
                 } else {
                     $option = '';
-                    //'<label class="control-label" for="shipingCity">Город доставки</label>
-                    // <input type="text" id="shipingCity" class="form-control" name="OrdersForm[shipingCity]" placeholder="---"></input>';;
                 }
                 return $option;
             }
@@ -718,16 +753,12 @@ class AutoshopController extends AppController // \yii\web\Controller
                 $city = ($_GET['city']);
                 $option = '';
 
-                if ($city == 'Харьков') {
-                    return    $option = 'Авторынок Автоград, пр. Л.Ландау 2-б, 4 ряд 31 магазин';
+                if ($city == 'Харьков' || $city == 'Харків') {
+                    return    $option = 'Авторинок Автоград, пр. Л.Ландау 2-б, 4 ряд 31 магазин';
                 } else {
                     return  $option = '';
                 }
-                //return $option;
             }
-
-            // 'Запрос принят!'.$_GET['data'];
-
         }
 
         if ($order_form->load(\Yii::$app->request->post())) {
@@ -763,7 +794,7 @@ class AutoshopController extends AppController // \yii\web\Controller
                         \Yii::$app
                             ->db
                             ->createCommand()
-                            ->insert('order_item', ['IdOrder' => $idOrder, 'IdProduct' => $cart['Id'], 'Name' => $cart['Name'], 'Price' => $cart['Price'], 'Quanty' => $cart['Quanty'], 'Cost' => $cart['Price'] * $cart['Quanty'], 'Availability' => 'в наличии', 'Supplier' => 'автоконтакт', 'Brand' => $brandItem->Brand])
+                            ->insert('order_item', ['IdOrder' => $idOrder, 'IdProduct' => $cart['Id'], 'Name' => $cart['Name'], 'Price' => $cart['Price'], 'Quanty' => $cart['Quanty'], 'Cost' => $cart['Price'] * $cart['Quanty'], 'Availability' => 'в наявності', 'Supplier' => 'автоконтакт', 'Brand' => $brandItem->Brand])
                             ->execute();
                     }
                 }
@@ -822,9 +853,6 @@ class AutoshopController extends AppController // \yii\web\Controller
 
                 $errors = $order_form->errors;
             }
-
-            //if (!empty($_POST['order_form'])) {
-            // }
         }
 
         return $this->render('order', compact('current', 'carts', 'order_form', 'shiping', 'customer'));
@@ -832,32 +860,11 @@ class AutoshopController extends AppController // \yii\web\Controller
 
     public function actionCart()
     {
-        $session = Yii::$app->session;
-        $session->open();
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
+        $greeting = $this->getSessionGreeting();
+        $customer = $this->getSessionCustomer();
+        $wishlist = $this->getWishSession();
+        $lang = $this->getSessionLang();
+        $current = $this->getSessionCurrent();
 
         $this->setMetaTags();
 
@@ -912,9 +919,7 @@ class AutoshopController extends AppController // \yii\web\Controller
             $Brand = $_GET['Brand'];
             $carts = $this->getCartSession();
 
-            if (isset($carts['zakaz'][$id])) {
-                // if ( $carts['zakaz'][$id]['Brand']== $Brand && $carts['zakaz']['Supplier']==$Supplier)
-                {
+            if (isset($carts['zakaz'][$id])) { {
                     unset($carts['zakaz'][$id]);
                 }
             }
@@ -983,42 +988,12 @@ class AutoshopController extends AppController // \yii\web\Controller
             }
         }
 
-        //$current = Current::findOne($id = $cur);
-
-
 
         return $this->render('cart', compact('cartProduct', 'current', 'carts', 'Quanty', 'up_form'));
     }
 
     public function actionContactform()
     {
-
-        $session = Yii::$app->session;
-        $session->open();
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
 
         $this->setMetaTags();
         $model = new ContactWriteForm();
@@ -1100,7 +1075,7 @@ class AutoshopController extends AppController // \yii\web\Controller
                 //     'feedback-success',
                 //     true
                 // );
-                Yii::$app->session->setFlash('success', 'Ваш заказ принят успешно, ожидайте звонка менеджера.');
+                Yii::$app->session->setFlash('success', 'Ваше замовлення прийнято успішно, чекайте на дзвінок менеджера.');
             }
             // выполняем редирект, чтобы избежать повторной отправки формы
             return $this->refresh();
@@ -1110,88 +1085,30 @@ class AutoshopController extends AppController // \yii\web\Controller
 
     public function actionContact()
     {
-        $session = Yii::$app->session;
-        $session->open();
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
+        $greeting = $this->getSessionGreeting();
+        $customer = $this->getSessionCustomer();
+        $wishlist = $this->getWishSession();
+        $lang = $this->getSessionLang();
+        $current = $this->getSessionCurrent();
 
         $this->setMetaTags();
 
 
         $store = Store::find()->select(' Id, Name_shop,  Description, Meta_title, Meta_description, Meta_keyword, Phone, Viber, Facebook_link , Work_time, Email, Adress,Owner, Telegram_link, Google_map, Logo, logo_small, Id_lang, Description_ua, 	Meta_title_ua, Meta_description_ua, Meta_keyword_ua, Work_time_ua, Adress_ua')->where(['Id' => 1])->one();
-        return $this->render('contact', compact('store'));
+        return $this->render('contact', compact('store', 'lang'));
     }
 
 
     public function actionIndex()
     {
-
-
-        // $client = new Client();
-        //         $response = $client->createRequest()
-        //     ->setMethod('GET')
-        //     ->setUrl('http://chavtog20000.bora.chost.com.ua/customers/1')
-        //     ->addHeaders(['Authorization' => 'Bearer xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'])
-        //     ->send();
-
-        //         // $restAPI= parseRequest('customers/1');
-        //          print_r($response);
         $model = new AutoForm();
-        $session = Yii::$app->session;
-        $session->open();
+        $session = $this->openSession();
         $session->remove('store');
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-        if (!Yii::$app->session->has('wish_auto')) {
-            Yii::$app->session->set('wish_auto', []);
-            $wishlist = [];
-        } else {
-            $wishlist = Yii::$app->session->get('wish_auto');
-        }
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
+        $this->getSessionGreeting();
+        $this->getSessionCustomer();
+        $this->getWishSession();
+        $this->getSessionLang();
+        $this->getSessionCurrent();
         if (!$session->has('cart')) {
             $session->set('cart', []);
         }
@@ -1245,36 +1162,15 @@ class AutoshopController extends AppController // \yii\web\Controller
     public function actionList($idCat = '', $nameCategory = 'Весь товар', $idBrand = '', $sorttext = ' DateAdd DESC')
     {
         //используем сессии
-        $session = Yii::$app->session;
-        $session->open();
-
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
-        $kurs = Kurs::find()->where(['Id' => 1])->one();
+        $greeting = $this->getSessionGreeting();
+        $customer = $this->getSessionCustomer();
         $wishlist = $this->getWishSession();
+        $lang = $this->getSessionLang();
+        $current = $this->getSessionCurrent();
 
+        $kurs = Kurs::find()->where(['Id' => 1])->one();
+
+        $wishlist = $this->getWishSession();
         $carts = $this->getCartSession();
 
 
@@ -1319,7 +1215,7 @@ class AutoshopController extends AppController // \yii\web\Controller
                 }
             }
             $carts['amount'] = $amount;
-            $session->set('cart', $carts);
+            Yii::$app->session->set('cart', $carts);
             $this->redirect(Yii::$app->request->referrer);
         }
         if ($_GET['addZakaz'] == 'add') {
@@ -1361,19 +1257,14 @@ class AutoshopController extends AppController // \yii\web\Controller
                 }
             }
             $carts['amount'] = $amount;
-            $session->set('cart', $carts);
+            Yii::$app->session->set('cart', $carts);
             $this->redirect(Yii::$app->request->referrer);
         }
 
         if ($_GET['delCart'] == 'del') {
             $id = abs((int) $_GET['id']);
-            $session = Yii::$app->session;
-            $session->open();
-            if (!$session->has('cart')) {
-                $session->set('cart', []);
-                $carts = [];
-            }
-            $carts = $session->get('cart');
+
+            $carts = $this->getCartSession();
 
             if (isset($carts['products'][$id])) {
                 unset($carts['products'][$id]);
@@ -1393,7 +1284,7 @@ class AutoshopController extends AppController // \yii\web\Controller
             }
 
             if (count($carts['products']) == 0) {
-                $session->set('cart', []);
+                Yii::$app->session->set('cart', []);
             }
             $amount = 0.0;
             foreach ($carts['products'] as $item) {
@@ -1402,18 +1293,12 @@ class AutoshopController extends AppController // \yii\web\Controller
 
             $carts['amount'] = $amount;
 
-            $session->set('cart', $carts);
+            Yii::$app->session->set('cart', $carts);
             $this->redirect(Yii::$app->request->referrer);
         }
         if ($_GET['delZakaz'] == 'del') {
             $id = abs((int) $_GET['id']);
-            $session = Yii::$app->session;
-            $session->open();
-            if (!$session->has('cart')) {
-                $session->set('cart', []);
-                $carts = [];
-            }
-            $carts = $session->get('cart');
+            $carts = $this->getCartSession();
 
             if (isset($carts['zakaz'][$id])) {
                 unset($carts['zakaz'][$id]);
@@ -1429,23 +1314,21 @@ class AutoshopController extends AppController // \yii\web\Controller
             }
             $carts['amount'] = $amount;
 
-            $session->set('cart', $carts);
+            Yii::$app->session->set('cart', $carts);
             $this->redirect(Yii::$app->request->referrer);
         }
 
         if (($_GET['wish'] == 'add')) {
-            $session = Yii::$app->session;
-            $session->open();
+
             $wishlist = $this->getWishSession();
             $id = abs((int) $_GET['id']);
             $product = Products::findOne($id);
-
             if (empty($product)) {
-                throw new \yii\web\HttpException(404, 'Такого товара нет');
+                throw new \yii\web\HttpException(404, 'Такого товару немає');
             }
 
             if (isset($wishlist['products'][$product->Id])) { // такой товар уже есть?
-                throw new \yii\web\HttpException(404, 'Данный товар уже добавлен в список желаний');
+                throw new \yii\web\HttpException(404, 'Цей товар вже додано до списку бажань');
             } else { // такого товара еще нет
                 $wishlist['products'][$product->Id]['Id'] = $product->Id;
                 $wishlist['products'][$product->Id]['Name'] = $product->Name;
@@ -1453,7 +1336,7 @@ class AutoshopController extends AppController // \yii\web\Controller
                 $wishlist['products'][$product->Id]['MinQunt'] = $product->MinQunt;
             }
 
-            $session->set('wish_auto', $wishlist);
+            Yii::$app->session->set('wish_auto', $wishlist);
             $this->redirect(Yii::$app->request->referrer);
         }
 
@@ -1478,12 +1361,7 @@ class AutoshopController extends AppController // \yii\web\Controller
         }
 
         $modelSort = new SortForm();
-        // if(\Yii::$app->request->isAjax){
-        //     return 'Запрос принят!';
-        // }
-        // Устанавливаем формат ответа JSON
-        //  Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        // Если пришёл AJAX запрос
+
 
 
         if ($_GET['sort'] == 1) {
@@ -1553,73 +1431,30 @@ class AutoshopController extends AppController // \yii\web\Controller
 
 
 
-    public function getCartSession()
-    {
-        $session = Yii::$app->session;
-        $session->open();
-        if (!$session->has('cart')) {
-            $session->set('cart', []);
-            return  [];
-        } else {
-            return   $session->get('cart');
-        }
-    }
-
-    public function getWishSession()
-    {
-        $session = Yii::$app->session;
-        $session->open();
-        if (!$session->has('wish_auto')) {
-            $session->set('wish_auto', []);
-            return  [];
-        } else {
-            return   $session->get('wish_auto');
-        }
-    }
 
     public function actionView()
     {
-        $session = Yii::$app->session;
-        $session->open();
+
         $kurs = Kurs::find()->where(['Id' => 1])->one();
         $page = Yii::$app->params['pageSize'];
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
+        $greeting = $this->getSessionGreeting();
+        $customer = $this->getSessionCustomer();
         $wishlist = $this->getWishSession();
+        $lang = $this->getSessionLang();
+        $current = $this->getSessionCurrent();
+        $carts = $this->getCartSession();
+
         // $this->setMetaTags();
         $message = '';
 
         $idCustom = $customer['Id'];
         $id = Yii::$app->request->get('id');
         $item = Products::findOne($id);
-        if (empty($item)) throw new \yii\web\HttpException(404, 'Такой страницы нет...');
-        $carts = $this->getCartSession();
+        if (empty($item)) throw new \yii\web\HttpException(404, 'Такої сторінки немає...');
+
 
         if (($_GET['wish'] == 'add')) {
-            $session = Yii::$app->session;
-            $session->open();
+
             $wishlist = $this->getWishSession();
 
             if (!isset($wishlist['products'][$item->Id]))
@@ -1634,7 +1469,7 @@ class AutoshopController extends AppController // \yii\web\Controller
                 $wishlist['products'][$item->Id]['MinQunt'] = $item->MinQunt;
             }
 
-            $session->set('wish_auto', $wishlist);
+            Yii::$app->session->set('wish_auto', $wishlist);
         }
 
         if (($_GET['wish'] == 'del')) {  //  $id = abs((int) $_GET['id']);
@@ -1731,7 +1566,7 @@ class AutoshopController extends AppController // \yii\web\Controller
                 }
                 $carts['amount'] = $amount;
 
-                $session->set('cart', $carts);
+                Yii::$app->session->set('cart', $carts);
                 return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
 
                 // $this->refresh();
@@ -1768,33 +1603,13 @@ class AutoshopController extends AppController // \yii\web\Controller
     public function actionZakaz()
     {
 
-        $session = Yii::$app->session;
-        $session->open();
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
+        $greeting = $this->getSessionGreeting();
+        $customer = $this->getSessionCustomer();
         $wishlist = $this->getWishSession();
+        $lang = $this->getSessionLang();
+        $current = $this->getSessionCurrent();
+        $carts = $this->getCartSession();
+
         $this->setMetaTags();
         $Id_lang = $lang['Id'];
         $arrmod = [];
@@ -1865,33 +1680,12 @@ class AutoshopController extends AppController // \yii\web\Controller
     public function actionWishlist($id = '')
 
     {
-        $session = Yii::$app->session;
-        $session->open();
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-        if (!$session->has('greeting')) {
-            $greeting = 'Здравствуйте';
-            $session->set('greeting', $greeting);
-        } else {
-            $greeting = $session->get('greeting');
-        }
-        if (!$session->has('lang')) {
-            $lang = ['Id' => 1, 'language' => 'Русский', 'Abb' => 'ru'];
-            $session->set('lang', $lang);
-        } else {
-            $lang = $session->get('lang');
-        }
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
+        $greeting = $this->getSessionGreeting();
+        $customer = $this->getSessionCustomer();
         $wishlist = $this->getWishSession();
+        $lang = $this->getSessionLang();
+        $current = $this->getSessionCurrent();
+        $carts = $this->getCartSession();
         $this->setMetaTags();
         $idCustom = $customer['Id'];
         $idses = 1;
@@ -1926,18 +1720,10 @@ class AutoshopController extends AppController // \yii\web\Controller
             Yii::$app->session->set('cart', $carts);
         }
 
-        // if (($_GET['del'] == 'delete')) {
-        //     $id = $_GET['id'];
-        //     \Yii::$app
-        //         ->db
-        //         ->createCommand()
-        //         ->delete('wishlist', 'IdProduct =' . $id)
-        //         ->execute();
-        // }
+
         if ($_GET['clear'] == 'clear') {
-            $session = Yii::$app->session;
-            $session->open();
-            $session->set('wish_auto', []);
+
+            Yii::$app->session->set('wish_auto', []);
             if ($customer['Id'] != 1) {
                 \Yii::$app
                     ->db
@@ -1967,7 +1753,7 @@ class AutoshopController extends AppController // \yii\web\Controller
 
         // $wishlists = Wishlist::find()->select('IdCustomer, IdProduct, DateAdd')->where(['IdCustomer' => $idCustom])->all();
         if (count($wishlist) == 0) {
-            $messageWish = 'Ваш список желаний пуст';
+            $messageWish = 'Ваш список бажань порожній';
         }
 
         $products = [];
@@ -1993,7 +1779,7 @@ class AutoshopController extends AppController // \yii\web\Controller
     ) {
 
         if ($query === ' ') {
-            Yii::$app->session->setFlash('success', 'Введите данные для поиска');
+            Yii::$app->session->setFlash('success', 'Введіть дані для пошуку');
             return $this->redirect(Yii::$app->request->referrer);
         }
         $query = trim($query);
@@ -2002,24 +1788,12 @@ class AutoshopController extends AppController // \yii\web\Controller
 
 
         $page = (int)$page;
-        $session = Yii::$app->session;
-        $session->open();
-        $carts = $session->get('cart');
-        if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
-            $session->set('customer', $customer);
-        } else {
-            $customer = $session->get('customer');
-        }
-
-        if (!$session->has('current')) {
-            $current = ['Id' => 1, 'Name' => 'ГРН', 'Small_name' => '₴'];
-            $session->set('current', $current);
-        } else {
-            $current = $session->get('current');
-        }
+        $greeting = $this->getSessionGreeting();
+        $customer = $this->getSessionCustomer();
         $wishlist = $this->getWishSession();
-        $current = $session->get('current');
+        $lang = $this->getSessionLang();
+        $current = $this->getSessionCurrent();
+        $carts = $this->getCartSession();
         // получаем результаты поиска с постраничной навигацией
         list($products, $pages) = (new Products())->getSearchResult($query, $page);
         //  if (empty($products))
@@ -2027,21 +1801,12 @@ class AutoshopController extends AppController // \yii\web\Controller
         list($zakaz_products, $pagesZ) = (new ZakazProducts())->getSearchResult($query, $page);
         //  } 
         if (($_GET['wish'] == 'add')) {
-            $session = Yii::$app->session;
-            $session->open();
             $wishlist = $this->getWishSession();
             $id = abs((int) $_GET['id']);
             $product = Products::findOne($id);
 
-            // if (!empty($product)) {
-            //     throw new \yii\web\HttpException(404, 'Такого товара нет');
-            // }     
-
-
-            // if (!isset($wishlist['products'][$product->Id]))
-            // {
             if (isset($wishlist['products'][$product->Id])) { // такой товар уже есть?
-                throw new \yii\web\HttpException(404, 'Данный товар уже добавлен в список желаний');
+                throw new \yii\web\HttpException(404, 'Цей товар вже додано до списку бажань');
             } else { // такого товара еще нет
                 $wishlist['products'][$product->Id]['Id'] = $product->Id;
                 $wishlist['products'][$product->Id]['Name'] = $product->Name;
@@ -2049,7 +1814,7 @@ class AutoshopController extends AppController // \yii\web\Controller
                 $wishlist['products'][$product->Id]['MinQunt'] = $product->MinQunt;
             }
 
-            $session->set('wish_auto', $wishlist);
+            Yii::$app->session->set('wish_auto', $wishlist);
             $this->redirect(Yii::$app->request->referrer);
         }
 
@@ -2106,7 +1871,8 @@ class AutoshopController extends AppController // \yii\web\Controller
                 }
             }
             $carts['amount'] = $amount;
-            $session->set('cart', $carts);
+
+            Yii::$app->session->set('cart', $carts);
             $this->redirect(Yii::$app->request->referrer);
         }
 
@@ -2149,19 +1915,13 @@ class AutoshopController extends AppController // \yii\web\Controller
                 }
             }
             $carts['amount'] = $amount;
-            $session->set('cart', $carts);
+            Yii::$app->session->set('cart', $carts);
             $this->redirect(Yii::$app->request->referrer);
         }
 
         if ($_GET['delCart'] == 'del') {
             $id = abs((int) $_GET['id']);
-            $session = Yii::$app->session;
-            $session->open();
-            if (!$session->has('cart')) {
-                $session->set('cart', []);
-                $carts = [];
-            }
-            $carts = $session->get('cart');
+            $carts = $this->getCartSession();
 
             if (isset($carts['products'][$id])) {
                 unset($carts['products'][$id]);
@@ -2172,7 +1932,7 @@ class AutoshopController extends AppController // \yii\web\Controller
             // }
 
             if (empty($carts['products'])) {
-                $session->set('cart', []);
+                Yii::$app->session->set('cart', []);
             }
             $amount = 0.0;
             if (!empty($carts['products'])) {
@@ -2188,7 +1948,7 @@ class AutoshopController extends AppController // \yii\web\Controller
 
             $carts['amount'] = $amount;
 
-            $session->set('cart', $carts);
+            Yii::$app->session->set('cart', $carts);
             $this->redirect(Yii::$app->request->referrer);
         }
         if ($_GET['delZakaz'] == 'del') {
@@ -2242,17 +2002,40 @@ class AutoshopController extends AppController // \yii\web\Controller
 
     public function actionPage($slug)
     {
-        if ($page = Page::find()->where(['slug' => $slug])->one()) {
+        $lang = $this->getSessionLang();
+        // print_r($lang);
+        $page = [];
+        if ($pageFound = Page::find()->where(['slug' => $slug])->one()) {
+            if ($lang['Id'] == 1) {
+                $page = [
+                    'Name' => $pageFound->Name_ua,
+                    'Content' => $pageFound->Content_ua,
+                    'Keywords' => $pageFound->Keywords_ua,
+                    'Description' => $pageFound->Description_ua,
+                    'Content' => $pageFound->Content_ua,
+                ];
+            } else {
+                $page = [
+                    'Name' => $pageFound->Name,
+                    'Content' => $pageFound->Content,
+                    'Keywords' => $pageFound->Keywords,
+                    'Description' => $pageFound->Description,
+                    'Content' => $pageFound->Content,
+                ];
+            }
             $this->setMetaTags(
-                $page->Name,
-                $page->Keywords,
-                $page->Description
+                $page['Name'],
+                $page['Keywords'],
+                $page['Description']
             );
             return $this->render(
                 'page',
-                ['page' => $page]
+                [
+                    'page' => $page,
+                    'lang' => $lang
+                ]
             );
         }
-        throw new NotFoundHttpException('Запрошенная страница не найдена');
+        throw new NotFoundHttpException('Запрошена сторінка не знайдена');
     }
 }

@@ -23,12 +23,7 @@ class AutocatalogController extends AppController
     {
         $session = Yii::$app->session;
         $session->open();
-        // if (!$session->has('autoMarka')) {
-        //     $autoMarka = [];
-        //     $session->set('autoMarka', $autoMarka);
-        // } else {
-        //     $autoMarka = $session->get('autoMarka');
-        // }
+
         $id = $_GET['id'];
         $model = new AutoForm();
         $marka = $_GET['marka'];
@@ -129,7 +124,7 @@ class AutocatalogController extends AppController
         $session->open();
         $carts = $session->get('cart');
         if (!$session->has('customer')) {
-            $customer = ['Id' => 1, 'FName' => 'Гость'];
+            $customer = ['Id' => 1, 'FName' => 'Гість'];
             $session->set('customer', $customer);
         } else {
             $customer = $session->get('customer');
@@ -259,7 +254,7 @@ class AutocatalogController extends AppController
         $oem = Oem::find()->where(['Id_auto' => $autoMarka['modification']])->all();
         $nodes = NodeAuto::find()->all();
         // получаем результаты поиска с постраничной навигацией
-        
+
         list($products, $pages) = (new Products())-> //getSearchResult($search, $page);
             getSearchAutoResult($search, $page);
 
